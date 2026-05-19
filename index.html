@@ -5,19 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <title>Contas a Pagar</title>
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4f46e5">
 <meta name="description" content="Controle de contas a pagar com lembretes push">
 
-<!-- iOS PWA -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Contas">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 
-<!-- Icons -->
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -26,7 +23,6 @@
 <link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
 
-<!-- iOS Splash Screens -->
 <link rel="apple-touch-startup-image" href="icons/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
 <link rel="apple-touch-startup-image" href="icons/splash-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)">
 <link rel="apple-touch-startup-image" href="icons/splash-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)">
@@ -44,7 +40,6 @@
   }
   body { background: var(--bg); color: var(--text); min-height: 100vh; min-height: 100dvh; }
 
-  /* LOGIN */
   .login-container { min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; padding-top: calc(20px + var(--safe-top)); padding-bottom: calc(20px + var(--safe-bot)); }
   .login-box { background: white; border-radius: 16px; padding: 32px 28px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
   .login-box h1 { font-size: 26px; margin-bottom: 8px; text-align: center; }
@@ -60,11 +55,9 @@
   .btn-primary:hover, .btn-primary:active { background: var(--primary-dark); }
   .error-msg { color: var(--danger); font-size: 13px; margin-top: 10px; text-align: center; min-height: 18px; }
 
-  /* APP */
   .app { display: none; padding-bottom: var(--safe-bot); }
   .app.active { display: block; }
   .header { background: white; padding: 12px 20px; padding-top: calc(12px + var(--safe-top)); box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; gap: 8px; flex-wrap: wrap; }
-  .header-title { display: flex; align-items: center; gap: 12px; }
   .header-title h1 { font-size: 18px; color: var(--primary); }
   .header-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .header-user { font-size: 12px; color: var(--text-light); margin-right: 4px; }
@@ -75,7 +68,6 @@
 
   .container { max-width: 1280px; margin: 0 auto; padding: 16px 20px; }
 
-  /* SUMMARY CARDS */
   .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
   .summary-card { background: var(--card); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); border-left: 4px solid var(--primary); }
   .summary-card.success { border-left-color: var(--success); }
@@ -85,17 +77,14 @@
   .summary-card .value { font-size: 20px; font-weight: 700; }
   .summary-card .count { font-size: 11px; color: var(--text-light); margin-top: 4px; }
 
-  /* FILTERS */
   .filters { display: flex; gap: 6px; margin-bottom: 16px; background: white; padding: 6px; border-radius: 12px; box-shadow: var(--shadow); flex-wrap: wrap; overflow-x: auto; }
   .filter-btn { padding: 8px 14px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-light); transition: all 0.2s; white-space: nowrap; }
   .filter-btn:hover { background: var(--bg); }
   .filter-btn.active { background: var(--primary); color: white; }
 
-  /* MAIN GRID */
   .main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 16px; }
   @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
 
-  /* BILLS LIST */
   .bills-section { background: white; border-radius: 12px; padding: 16px; box-shadow: var(--shadow); }
   .section-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
   .bills-list { display: flex; flex-direction: column; gap: 10px; }
@@ -117,12 +106,10 @@
   .btn-action.success { background: var(--success); color: white; }
   .btn-action.danger { background: var(--danger); color: white; }
 
-  /* SIDEBAR */
   .sidebar { display: flex; flex-direction: column; gap: 14px; }
   .sidebar-card { background: white; border-radius: 12px; padding: 16px; box-shadow: var(--shadow); }
   .sidebar-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
 
-  /* MODAL */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; padding-top: calc(20px + var(--safe-top)); padding-bottom: calc(20px + var(--safe-bot)); }
   .modal-overlay.active { display: flex; }
   .modal { background: white; border-radius: 16px; padding: 24px; width: 100%; max-width: 520px; max-height: 90vh; max-height: 90dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
@@ -135,7 +122,6 @@
   .checkbox-group input { width: auto; }
   .checkbox-group label { margin-bottom: 0; cursor: pointer; font-size: 14px; }
 
-  /* CATEGORIES */
   .category-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; margin-bottom: 12px; }
   .category-chip { background: var(--bg); padding: 6px 10px; border-radius: 6px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
   .category-chip button { background: none; border: none; cursor: pointer; color: var(--danger); font-weight: bold; padding: 0 4px; }
@@ -143,13 +129,11 @@
   .add-category-row input { flex: 1; padding: 8px 10px; font-size: 14px; }
   .add-category-row button { padding: 8px 14px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; }
 
-  /* PUSH CONFIG */
   .push-status { padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; }
   .push-status.granted { background: #d1fae5; color: #065f46; }
   .push-status.denied { background: #fee2e2; color: #991b1b; }
   .push-status.default { background: #fef3c7; color: #92400e; }
 
-  /* NOTIFICATION ROWS */
   .notif-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto auto; gap: 8px; align-items: end; background: var(--bg); padding: 10px; border-radius: 8px; margin-bottom: 8px; }
   .notif-row .notif-field label { font-size: 11px; color: var(--text-light); margin-bottom: 4px; display: block; }
   .notif-row .notif-field input, .notif-row .notif-field select { width: 100%; padding: 8px 9px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px; background: white; }
@@ -159,20 +143,15 @@
   @media (max-width: 600px) { .notif-row { grid-template-columns: 1fr 1fr; } }
   .notif-empty { font-size: 12px; color: var(--text-light); padding: 12px; text-align: center; background: var(--bg); border-radius: 8px; }
 
-  /* CHART */
   .chart-container { position: relative; height: 200px; }
-
-  /* EMPTY STATE */
   .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
   .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
 
-  /* TOAST */
   .toast { position: fixed; bottom: calc(20px + var(--safe-bot)); left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text); color: white; padding: 14px 22px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2000; opacity: 0; transition: all 0.3s; max-width: 340px; font-size: 14px; text-align: center; }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   .toast.success { background: var(--success); }
   .toast.danger { background: var(--danger); }
 
-  /* INSTALL BANNER */
   .install-banner { display: none; position: fixed; bottom: calc(16px + var(--safe-bot)); left: 16px; right: 16px; background: var(--primary); color: white; padding: 12px 16px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 999; align-items: center; gap: 12px; font-size: 13px; }
   .install-banner.show { display: flex; }
   .install-banner button { background: white; color: var(--primary); border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; }
@@ -181,7 +160,6 @@
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
 <div id="loginScreen" class="login-container">
   <div class="login-box">
     <h1>💰 Contas a Pagar</h1>
@@ -194,19 +172,35 @@
       <div class="form-group"><label>E-mail</label><input type="email" id="loginEmail" required autocomplete="email"></div>
       <div class="form-group"><label>Senha</label><input type="password" id="loginPassword" required autocomplete="current-password"></div>
       <button type="submit" class="btn-primary">Entrar</button>
+      <p style="text-align:center;margin-top:10px;"><a href="#" id="forgotPasswordLink" style="color:var(--primary);font-size:13px;text-decoration:none;">Esqueci minha senha</a></p>
       <p class="error-msg" id="loginError"></p>
     </form>
     <form id="registerForm" style="display:none;">
       <div class="form-group"><label>E-mail</label><input type="email" id="registerEmail" required autocomplete="email"></div>
       <div class="form-group"><label>Senha (mínimo 6 caracteres)</label><input type="password" id="registerPassword" minlength="6" required autocomplete="new-password"></div>
       <div class="form-group"><label>Confirmar senha</label><input type="password" id="registerConfirm" minlength="6" required autocomplete="new-password"></div>
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:6px;">
+        <p style="font-size:12px;color:var(--text-light);margin-bottom:10px;">🔐 Pergunta de segurança (usada para recuperar a senha)</p>
+        <div class="form-group">
+          <label>Escolha uma pergunta</label>
+          <select id="registerQuestion" required>
+            <option value="Qual o nome do seu primeiro pet?">Qual o nome do seu primeiro pet?</option>
+            <option value="Qual o nome da rua onde você cresceu?">Qual o nome da rua onde você cresceu?</option>
+            <option value="Qual o nome de solteira da sua mãe?">Qual o nome de solteira da sua mãe?</option>
+            <option value="Qual sua cidade natal?">Qual sua cidade natal?</option>
+            <option value="Qual o nome da sua primeira escola?">Qual o nome da sua primeira escola?</option>
+            <option value="Qual o modelo do seu primeiro carro?">Qual o modelo do seu primeiro carro?</option>
+            <option value="Qual o nome do seu melhor amigo de infância?">Qual o nome do seu melhor amigo de infância?</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Sua resposta</label><input type="text" id="registerAnswer" required placeholder="Digite a resposta secreta"></div>
+      </div>
       <button type="submit" class="btn-primary">Criar conta</button>
       <p class="error-msg" id="registerError"></p>
     </form>
   </div>
 </div>
 
-<!-- APP -->
 <div id="app" class="app">
   <header class="header">
     <div class="header-title"><h1>💰 Contas</h1></div>
@@ -214,6 +208,7 @@
       <span class="header-user" id="headerUser"></span>
       <button class="btn-icon" onclick="openCategoryModal()">🏷️</button>
       <button class="btn-icon" onclick="openPushModal()">🔔</button>
+      <button class="btn-icon" onclick="openSyncModal()" id="syncIndicator" title="Sincronização">🔄</button>
       <button class="btn-icon btn-primary-icon" onclick="openBillModal()">+ Nova</button>
       <button class="btn-icon" onclick="logout()">Sair</button>
     </div>
@@ -247,7 +242,6 @@
   </div>
 </div>
 
-<!-- BILL MODAL -->
 <div class="modal-overlay" id="billModal">
   <div class="modal">
     <div class="modal-header"><h2 id="billModalTitle">Nova conta</h2><button class="modal-close" onclick="closeBillModal()">×</button></div>
@@ -277,7 +271,6 @@
   </div>
 </div>
 
-<!-- CATEGORY MODAL -->
 <div class="modal-overlay" id="categoryModal">
   <div class="modal">
     <div class="modal-header"><h2>Gerenciar categorias</h2><button class="modal-close" onclick="closeCategoryModal()">×</button></div>
@@ -287,7 +280,6 @@
   </div>
 </div>
 
-<!-- PUSH MODAL -->
 <div class="modal-overlay" id="pushModal">
   <div class="modal">
     <div class="modal-header"><h2>🔔 Push</h2><button class="modal-close" onclick="closePushModal()">×</button></div>
@@ -295,62 +287,139 @@
     <button class="btn-primary" id="requestPermBtn" style="margin-bottom:16px;" onclick="requestNotificationPermission()">Solicitar permissão</button>
     <div class="form-group"><div class="checkbox-group"><input type="checkbox" id="pushEnabled"><label for="pushEnabled">Ativar lembretes push (chave geral)</label></div><p style="font-size:12px;color:var(--text-light);margin-top:6px;">Os avisos (dias, hora, som) são configurados em cada conta.</p></div>
     <button class="btn-primary" onclick="savePushSettings()">Salvar</button>
-    <p style="font-size:11px;color:var(--text-light);margin-top:12px;">⚠️ Mantenha o app aberto para receber os avisos. Quando você abrir o app, ele também mostra lembretes acumulados desde a última vez.</p>
+    <p style="font-size:11px;color:var(--text-light);margin-top:12px;">⚠️ Mantenha o app aberto para receber os avisos. Ao reabrir, você vê resumo de contas vencidas/do dia.</p>
   </div>
 </div>
 
-<!-- TOAST -->
+<div class="modal-overlay" id="recoveryModal">
+  <div class="modal">
+    <div class="modal-header"><h2>🔐 Recuperar senha</h2><button class="modal-close" onclick="closeRecoveryModal()">×</button></div>
+    <div id="recoveryStep1">
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:14px;">Digite o e-mail da sua conta para iniciar a recuperação.</p>
+      <div class="form-group"><label>E-mail</label><input type="email" id="recoveryEmail" required></div>
+      <button class="btn-primary" onclick="recoveryStep1()">Continuar</button>
+      <p class="error-msg" id="recoveryError1"></p>
+    </div>
+    <div id="recoveryStep2" style="display:none;">
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:14px;">Responda sua pergunta de segurança:</p>
+      <div class="form-group"><label id="recoveryQuestionLabel">Pergunta</label><input type="text" id="recoveryAnswer" required></div>
+      <button class="btn-primary" onclick="recoveryStep2()">Verificar resposta</button>
+      <p class="error-msg" id="recoveryError2"></p>
+    </div>
+    <div id="recoveryStep3" style="display:none;">
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:14px;">Defina uma nova senha:</p>
+      <div class="form-group"><label>Nova senha (mínimo 6 caracteres)</label><input type="password" id="recoveryNewPass" minlength="6" required></div>
+      <div class="form-group"><label>Confirmar nova senha</label><input type="password" id="recoveryNewPass2" minlength="6" required></div>
+      <button class="btn-primary" onclick="recoveryStep3()">Salvar nova senha</button>
+      <p class="error-msg" id="recoveryError3"></p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="syncModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header"><h2>🔄 Sincronização (iPhone ↔ Mac)</h2><button class="modal-close" onclick="closeSyncModal()">×</button></div>
+    <div id="syncStatusBox" class="push-status default">Sincronização desativada</div>
+    <details style="margin-bottom:14px;background:var(--bg);padding:10px;border-radius:8px;">
+      <summary style="cursor:pointer;font-size:13px;font-weight:600;">Como configurar (passo a passo)</summary>
+      <div style="font-size:12px;color:var(--text);line-height:1.6;margin-top:10px;">
+        <ol style="padding-left:20px;">
+          <li>Acesse <a href="https://console.firebase.google.com" target="_blank" style="color:var(--primary);">console.firebase.google.com</a></li>
+          <li>Crie um projeto qualquer</li>
+          <li>Registre um app Web (ícone &lt;/&gt;)</li>
+          <li>Copie o objeto <code>firebaseConfig</code></li>
+          <li>Habilite Authentication → Email/Senha</li>
+          <li>Crie Firestore Database em modo produção</li>
+          <li>Cole as regras de segurança (veja COMO_CONFIGURAR_FIREBASE.txt)</li>
+          <li>Cole o config abaixo e ative</li>
+        </ol>
+      </div>
+    </details>
+    <div class="form-group"><label>Cole aqui o firebaseConfig (JSON)</label><textarea id="syncConfig" rows="8" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "...", "storageBucket": "...", "messagingSenderId": "...", "appId": "..."}'></textarea></div>
+    <div class="form-group" style="display:flex;gap:8px;"><button class="btn-primary" style="flex:1;" onclick="enableSync()">Ativar sincronização</button><button class="btn-icon" onclick="disableSync()" style="background:var(--danger);color:white;">Desativar</button></div>
+    <p style="font-size:11px;color:var(--text-light);margin-top:12px;">Ative no iPhone e no Mac usando o MESMO Firebase config e a mesma senha. Tudo passa a sincronizar em tempo real.</p>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
-
-<!-- iOS Install Banner -->
-<div class="install-banner" id="installBanner">
-  <div style="flex:1;">
-    📲 Adicione à Tela de Início: toque em <strong>Compartilhar</strong> → <strong>"Adicionar à Tela de Início"</strong>
-  </div>
-  <button class="close-banner" onclick="dismissInstallBanner()">×</button>
-</div>
+<div class="install-banner" id="installBanner"><div style="flex:1;">📲 Adicione à Tela de Início: toque em <strong>Compartilhar</strong> → <strong>"Adicionar à Tela de Início"</strong></div><button class="close-banner" onclick="dismissInstallBanner()">×</button></div>
 
 <script>
-// ============= STATE =============
 const STORAGE_KEY = 'controleContasApp_v1';
 let state = {
-  users: {},
-  currentUser: null,
-  bills: [],
+  users: {}, currentUser: null, bills: [],
   categories: ['Moradia','Energia','Água','Internet','Cartão','Streaming','Alimentação','Transporte','Saúde','Educação','Outros'],
-  pushSettings: { enabled: false },
-  sentNotifications: {},
-  currentFilter: 'todas',
-  currentCategoryFilter: '',
-  currentCostCenterFilter: '',
+  pushSettings: { enabled: false }, sentNotifications: {},
+  currentFilter: 'todas', currentCategoryFilter: '', currentCostCenterFilter: '',
   editingBillId: null
 };
 
-// ============= PERSISTENCE =============
-function saveState() {
+function saveStateLocal() {
   const persistable = { users: state.users, bills: state.bills, categories: state.categories, pushSettings: state.pushSettings, sentNotifications: state.sentNotifications };
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(persistable)); } catch(e) { console.warn(e); }
 }
-function loadState() {
-  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) Object.assign(state, JSON.parse(raw)); } catch(e) { console.warn(e); }
+let saveState = function() { saveStateLocal(); };
+function loadState() { try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) Object.assign(state, JSON.parse(raw)); } catch(e) { console.warn(e); } }
+
+// Pure-JS SHA-256 fallback for file:// and non-HTTPS
+function sha256_js(ascii) {
+  function rightRotate(n, x) { return ((x >>> n) | (x << (32-n))); }
+  var maxWord = Math.pow(2, 32), i, j, result = '', words = [], asciiBitLength = ascii.length*8;
+  var hash = sha256_js.h = sha256_js.h || [], k = sha256_js.k = sha256_js.k || [], primeCounter = k.length, isComposite = {};
+  for (var candidate = 2; primeCounter < 64; candidate++) {
+    if (!isComposite[candidate]) {
+      for (i = 0; i < 313; i += candidate) isComposite[i] = candidate;
+      hash[primeCounter] = (Math.pow(candidate, .5) * maxWord) | 0;
+      k[primeCounter++] = (Math.pow(candidate, 1/3) * maxWord) | 0;
+    }
+  }
+  ascii += '\x80'; while (ascii.length%64 - 56) ascii += '\x00';
+  for (i = 0; i < ascii.length; i++) {
+    j = ascii.charCodeAt(i); if (j>>8) return;
+    words[i>>2] |= j << ((3 - i)%4)*8;
+  }
+  words[words.length] = ((asciiBitLength/maxWord) | 0);
+  words[words.length] = (asciiBitLength);
+  for (j = 0; j < words.length;) {
+    var w = words.slice(j, j += 16), oldHash = hash;
+    hash = hash.slice(0, 8);
+    for (i = 0; i < 64; i++) {
+      var w15 = w[i - 15], w2 = w[i - 2], a = hash[0], e = hash[4];
+      var temp1 = hash[7] + (rightRotate(6, e) ^ rightRotate(11, e) ^ rightRotate(25, e)) + ((e&hash[5])^((~e)&hash[6])) + k[i] + (w[i] = (i < 16) ? w[i] : (w[i - 16] + (rightRotate(7, w15) ^ rightRotate(18, w15) ^ (w15>>>3)) + w[i - 7] + (rightRotate(17, w2) ^ rightRotate(19, w2) ^ (w2>>>10))) | 0);
+      var temp2 = (rightRotate(2, a) ^ rightRotate(13, a) ^ rightRotate(22, a)) + ((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));
+      hash = [(temp1 + temp2) | 0].concat(hash);
+      hash[4] = (hash[4] + temp1) | 0;
+    }
+    for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+  }
+  for (i = 0; i < 8; i++) for (j = 3; j + 1; j--) {
+    var b = (hash[i] >> (j*8)) & 255;
+    result += ((b < 16) ? 0 : '') + b.toString(16);
+  }
+  return result;
 }
 
-// ============= UTILS =============
 async function sha256(text) {
-  const buf = new TextEncoder().encode(text);
-  const hash = await crypto.subtle.digest('SHA-256', buf);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+  try {
+    if (typeof crypto !== 'undefined' && crypto.subtle && crypto.subtle.digest) {
+      const buf = new TextEncoder().encode(text);
+      const hash = await crypto.subtle.digest('SHA-256', buf);
+      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+  } catch(e) { console.warn('Web Crypto failed, fallback:', e); }
+  return sha256_js(text);
 }
+
+function normalizeAnswer(a) { return (a || '').trim().toLowerCase().replace(/\s+/g, ' '); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
 function formatBRL(v) { return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
 function todayISO() { return new Date().toISOString().slice(0,10); }
 function parseDate(iso) { const [y,m,d] = iso.split('-').map(Number); return new Date(y, m-1, d); }
 function daysBetween(a, b) { return Math.floor((b - a) / (1000*60*60*24)); }
 function formatDate(iso) { return parseDate(iso).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'}); }
-function getBillStatus(bill) { if (bill.paid) return 'pago'; const today = parseDate(todayISO()); const due = parseDate(bill.dueDate); return due < today ? 'vencido' : 'apagar'; }
+function getBillStatus(bill) { if (bill.paid) return 'pago'; const today = parseDate(todayISO()); return parseDate(bill.dueDate) < today ? 'vencido' : 'apagar'; }
 function showToast(msg, type = '') { const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast show ' + type; setTimeout(() => t.classList.remove('show'), 3000); }
 
-// ============= LOGIN =============
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -369,10 +438,12 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   errEl.textContent = '';
   const user = state.users[email];
   if (!user) { errEl.textContent = 'E-mail não cadastrado.'; return; }
-  const hash = await sha256(password + ':' + email);
-  if (hash !== user.passwordHash) { errEl.textContent = 'Senha incorreta.'; return; }
-  state.currentUser = email;
-  enterApp();
+  try {
+    const hash = await sha256(password + ':' + email);
+    if (hash !== user.passwordHash) { errEl.textContent = 'Senha incorreta.'; return; }
+    state.currentUser = email;
+    enterApp();
+  } catch(err) { errEl.textContent = 'Erro: ' + err.message; }
 });
 
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
@@ -380,25 +451,80 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   const email = document.getElementById('registerEmail').value.trim().toLowerCase();
   const password = document.getElementById('registerPassword').value;
   const confirm = document.getElementById('registerConfirm').value;
+  const question = document.getElementById('registerQuestion').value;
+  const answer = document.getElementById('registerAnswer').value;
   const errEl = document.getElementById('registerError');
   errEl.textContent = '';
   if (password !== confirm) { errEl.textContent = 'As senhas não conferem.'; return; }
+  if (!normalizeAnswer(answer)) { errEl.textContent = 'Resposta obrigatória.'; return; }
   if (state.users[email]) { errEl.textContent = 'E-mail já cadastrado.'; return; }
-  const hash = await sha256(password + ':' + email);
-  state.users[email] = { passwordHash: hash, createdAt: new Date().toISOString() };
-  state.currentUser = email;
-  saveState();
-  showToast('Conta criada com sucesso!', 'success');
-  enterApp();
+  try {
+    const hash = await sha256(password + ':' + email);
+    const answerHash = await sha256(normalizeAnswer(answer) + ':' + email);
+    state.users[email] = { passwordHash: hash, securityQuestion: question, securityAnswerHash: answerHash, createdAt: new Date().toISOString() };
+    state.currentUser = email;
+    saveState();
+    showToast('Conta criada com sucesso!', 'success');
+    enterApp();
+  } catch(err) { errEl.textContent = 'Erro: ' + err.message; }
 });
+
+let recoveryEmail = null;
+document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
+  e.preventDefault();
+  recoveryEmail = null;
+  ['recoveryStep1'].forEach(id => document.getElementById(id).style.display = 'block');
+  ['recoveryStep2','recoveryStep3'].forEach(id => document.getElementById(id).style.display = 'none');
+  ['recoveryEmail','recoveryAnswer','recoveryNewPass','recoveryNewPass2'].forEach(id => document.getElementById(id).value = '');
+  ['recoveryError1','recoveryError2','recoveryError3'].forEach(id => document.getElementById(id).textContent = '');
+  document.getElementById('recoveryModal').classList.add('active');
+});
+function closeRecoveryModal() { document.getElementById('recoveryModal').classList.remove('active'); }
+function recoveryStep1() {
+  const email = document.getElementById('recoveryEmail').value.trim().toLowerCase();
+  const errEl = document.getElementById('recoveryError1');
+  errEl.textContent = '';
+  const user = state.users[email];
+  if (!user) { errEl.textContent = 'E-mail não cadastrado neste dispositivo.'; return; }
+  if (!user.securityQuestion) { errEl.textContent = 'Conta sem pergunta de segurança. Crie uma nova conta.'; return; }
+  recoveryEmail = email;
+  document.getElementById('recoveryQuestionLabel').textContent = user.securityQuestion;
+  document.getElementById('recoveryStep1').style.display = 'none';
+  document.getElementById('recoveryStep2').style.display = 'block';
+}
+async function recoveryStep2() {
+  const answer = document.getElementById('recoveryAnswer').value;
+  const errEl = document.getElementById('recoveryError2');
+  errEl.textContent = '';
+  try {
+    const hash = await sha256(normalizeAnswer(answer) + ':' + recoveryEmail);
+    if (hash !== state.users[recoveryEmail].securityAnswerHash) { errEl.textContent = 'Resposta incorreta.'; return; }
+    document.getElementById('recoveryStep2').style.display = 'none';
+    document.getElementById('recoveryStep3').style.display = 'block';
+  } catch(err) { errEl.textContent = 'Erro: ' + err.message; }
+}
+async function recoveryStep3() {
+  const p1 = document.getElementById('recoveryNewPass').value;
+  const p2 = document.getElementById('recoveryNewPass2').value;
+  const errEl = document.getElementById('recoveryError3');
+  errEl.textContent = '';
+  if (p1.length < 6) { errEl.textContent = 'Senha deve ter pelo menos 6 caracteres.'; return; }
+  if (p1 !== p2) { errEl.textContent = 'As senhas não conferem.'; return; }
+  try {
+    state.users[recoveryEmail].passwordHash = await sha256(p1 + ':' + recoveryEmail);
+    saveState();
+    closeRecoveryModal();
+    showToast('Senha redefinida! Faça login.', 'success');
+  } catch(err) { errEl.textContent = 'Erro: ' + err.message; }
+}
 
 function enterApp() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').classList.add('active');
   document.getElementById('headerUser').textContent = '👤 ' + state.currentUser.split('@')[0];
-  refreshUI();
-  // On enter, check for missed notifications (catch-up)
-  catchUpNotifications();
+  refreshUI(); catchUpNotifications();
+  const cfg = loadSyncConfig();
+  if (cfg && !firebaseUser) setTimeout(() => initFirebase(cfg), 500);
 }
 function logout() {
   state.currentUser = null;
@@ -407,7 +533,6 @@ function logout() {
   document.getElementById('loginPassword').value = '';
 }
 
-// ============= BILLS =============
 function openBillModal(billId = null) {
   state.editingBillId = billId;
   const form = document.getElementById('billForm');
@@ -453,14 +578,14 @@ function addNotificationRow(data = { daysBefore: 1, time: '09:00', sound: 'ding'
       <option value="alert" ${data.sound==='alert'?'selected':''}>Alerta</option>
       <option value="none" ${data.sound==='none'?'selected':''}>Sem som</option>
     </select></div>
-    <button type="button" class="notif-test" title="Testar som" onclick="testNotifSound(this)">▶</button>
-    <button type="button" class="notif-remove" title="Remover" onclick="removeNotificationRow(this)">×</button>`;
+    <button type="button" class="notif-test" onclick="testNotifSound(this)">▶</button>
+    <button type="button" class="notif-remove" onclick="removeNotificationRow(this)">×</button>`;
   container.appendChild(row);
 }
 function removeNotificationRow(btn) { btn.closest('.notif-row').remove(); renderNotifEmpty(); }
 function renderNotifEmpty() {
-  const container = document.getElementById('notificationsContainer');
-  if (container.querySelectorAll('.notif-row').length === 0) container.innerHTML = '<div class="notif-empty">Nenhum aviso — clique em "+ Adicionar"</div>';
+  const c = document.getElementById('notificationsContainer');
+  if (c.querySelectorAll('.notif-row').length === 0) c.innerHTML = '<div class="notif-empty">Nenhum aviso — clique em "+ Adicionar"</div>';
 }
 function testNotifSound(btn) { playSound(btn.closest('.notif-row').querySelector('.notif-sound').value); }
 function collectNotificationsFromForm() {
@@ -495,9 +620,7 @@ document.getElementById('billForm').addEventListener('submit', (e) => {
     state.bills.push(billData);
     showToast('Conta cadastrada', 'success');
   }
-  saveState();
-  closeBillModal();
-  refreshUI();
+  saveState(); closeBillModal(); refreshUI();
 });
 
 function markPaid(billId) {
@@ -518,7 +641,6 @@ function markPaid(billId) {
 function unmarkPaid(billId) { const b = state.bills.find(x => x.id === billId); if (b) { b.paid = false; b.paidAt = null; saveState(); refreshUI(); } }
 function deleteBill(billId) { if (!confirm('Excluir esta conta?')) return; state.bills = state.bills.filter(b => b.id !== billId); saveState(); refreshUI(); showToast('Conta excluída'); }
 
-// ============= CATEGORIES =============
 function openCategoryModal() { renderCategoryList(); document.getElementById('categoryModal').classList.add('active'); }
 function closeCategoryModal() { document.getElementById('categoryModal').classList.remove('active'); }
 function renderCategoryList() {
@@ -554,7 +676,6 @@ function populateCostCenterFilter() {
   sel.value = current;
 }
 
-// ============= FILTERS =============
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -578,7 +699,6 @@ function filterBills(bills) {
   }
 }
 
-// ============= RENDER =============
 function renderBills() {
   const bills = filterBills(state.bills).sort((a, b) => state.currentFilter === 'historico' ? 0 : parseDate(a.dueDate) - parseDate(b.dueDate));
   const list = document.getElementById('billsList');
@@ -586,8 +706,7 @@ function renderBills() {
   if (bills.length === 0) { list.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>Nenhuma conta nesta categoria.</p></div>`; return; }
   list.innerHTML = bills.map(b => {
     const status = getBillStatus(b);
-    const today = parseDate(todayISO()); const due = parseDate(b.dueDate);
-    const diff = daysBetween(today, due);
+    const today = parseDate(todayISO()); const diff = daysBetween(today, parseDate(b.dueDate));
     let dueLabel = formatDate(b.dueDate);
     if (!b.paid) {
       if (diff === 0) dueLabel += ' (hoje)';
@@ -672,19 +791,16 @@ function refreshUI() {
   renderSummary(); renderBills(); renderChart(); renderUpcoming();
 }
 
-// ============= PUSH NOTIFICATIONS =============
 function openPushModal() { updatePushStatus(); document.getElementById('pushEnabled').checked = state.pushSettings.enabled; document.getElementById('pushModal').classList.add('active'); }
 function closePushModal() { document.getElementById('pushModal').classList.remove('active'); }
-
 function updatePushStatus() {
   const box = document.getElementById('pushStatusBox'); const btn = document.getElementById('requestPermBtn');
   if (!('Notification' in window)) { box.textContent = '❌ Notificações não suportadas'; box.className = 'push-status denied'; btn.style.display = 'none'; return; }
   const perm = Notification.permission;
   if (perm === 'granted') { box.textContent = '✅ Permissão concedida'; box.className = 'push-status granted'; btn.style.display = 'none'; }
-  else if (perm === 'denied') { box.textContent = '❌ Permissão negada — habilite em Ajustes do iPhone ou Mac'; box.className = 'push-status denied'; btn.style.display = 'none'; }
+  else if (perm === 'denied') { box.textContent = '❌ Permissão negada'; box.className = 'push-status denied'; btn.style.display = 'none'; }
   else { box.textContent = '⚠️ Permissão não concedida'; box.className = 'push-status default'; btn.style.display = 'block'; }
 }
-
 async function requestNotificationPermission() {
   if (!('Notification' in window)) return;
   const perm = await Notification.requestPermission();
@@ -693,7 +809,6 @@ async function requestNotificationPermission() {
 }
 function savePushSettings() { state.pushSettings = { enabled: document.getElementById('pushEnabled').checked }; saveState(); closePushModal(); showToast('Configurações salvas', 'success'); }
 
-// ============= SOUND =============
 let audioCtx;
 function playSound(type) {
   if (type === 'none') return;
@@ -705,8 +820,7 @@ function playSound(type) {
       chime: [{f:523, d:0.3},{f:659, d:0.3, delay:0.2},{f:784, d:0.4, delay:0.4}],
       alert: [{f:880, d:0.12},{f:660, d:0.12, delay:0.15},{f:880, d:0.12, delay:0.3},{f:660, d:0.12, delay:0.45}]
     };
-    const preset = presets[type] || presets.ding;
-    preset.forEach(({f, d, delay = 0}) => {
+    (presets[type] || presets.ding).forEach(({f, d, delay = 0}) => {
       const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
       osc.frequency.value = f; osc.type = 'sine';
       osc.connect(gain); gain.connect(audioCtx.destination);
@@ -719,9 +833,7 @@ function playSound(type) {
   } catch(e) { console.warn('Sound error', e); }
 }
 
-// ============= NOTIFICATION DISPATCH =============
 function showNotification(title, body, options = {}) {
-  // Prefer Service Worker notification (works better on mobile)
   if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', title, body, tag: options.tag });
   } else if ('Notification' in window && Notification.permission === 'granted') {
@@ -737,7 +849,6 @@ function checkNotifications() {
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
   const userBills = state.bills.filter(b => b.user === state.currentUser && !b.paid);
   let stateChanged = false;
-
   userBills.forEach(bill => {
     if (!bill.notifications || bill.notifications.length === 0) return;
     const due = parseDate(bill.dueDate);
@@ -747,11 +858,9 @@ function checkNotifications() {
       const shouldConsider = isTargetDay || (diffToDue < 0);
       if (!shouldConsider) return;
       const [hh, mm] = notif.time.split(':').map(Number);
-      const targetMinutes = hh * 60 + mm;
-      if (Math.abs(nowMinutes - targetMinutes) > 1) return;
+      if (Math.abs(nowMinutes - (hh*60+mm)) > 1) return;
       const key = `${bill.id}__${notif.id}__${todayStr}`;
       if (state.sentNotifications[key]) return;
-
       const isOverdue = diffToDue < 0;
       const when = diffToDue === 0 ? 'vence hoje' : diffToDue > 0 ? `vence em ${diffToDue}d` : `vencida há ${Math.abs(diffToDue)}d`;
       const title = isOverdue ? `⚠️ ${bill.name} — VENCIDA` : `🔔 ${bill.name}`;
@@ -762,14 +871,12 @@ function checkNotifications() {
       stateChanged = true;
     });
   });
-
   const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 60);
   const cutoffStr = cutoff.toISOString().slice(0,10);
   Object.keys(state.sentNotifications).forEach(k => { const parts = k.split('__'); if (parts[2] && parts[2] < cutoffStr) { delete state.sentNotifications[k]; stateChanged = true; } });
   if (stateChanged) saveState();
 }
 
-// Catch-up: when user opens the app, show a summary if there are unsent reminders today
 function catchUpNotifications() {
   if (!state.pushSettings.enabled) return;
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
@@ -789,33 +896,168 @@ function catchUpNotifications() {
     state.sentNotifications[key] = true; saveState();
   }
 }
-
 setInterval(checkNotifications, 30000);
 setTimeout(checkNotifications, 3000);
-
-// ============= PWA INSTALL =============
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
 
 function isIos() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
 function isInStandaloneMode() { return ('standalone' in navigator) && navigator.standalone || window.matchMedia('(display-mode: standalone)').matches; }
 function dismissInstallBanner() { document.getElementById('installBanner').classList.remove('show'); sessionStorage.setItem('bannerDismissed', '1'); }
-
 if (isIos() && !isInStandaloneMode() && !sessionStorage.getItem('bannerDismissed')) {
   setTimeout(() => document.getElementById('installBanner').classList.add('show'), 2500);
 }
 
-// ============= SERVICE WORKER REGISTRATION =============
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js').then(reg => {
-      console.log('SW registered:', reg.scope);
-    }).catch(err => console.warn('SW registration failed:', err));
+    navigator.serviceWorker.register('service-worker.js').then(reg => console.log('SW registered:', reg.scope)).catch(err => console.warn('SW failed:', err));
   });
 }
 
-// ============= INIT =============
+// ============= FIREBASE SYNC =============
+let firebaseApp = null, firebaseAuth = null, firebaseDb = null, firebaseUser = null;
+let firebaseUnsubscribe = null, suppressNextSnapshot = false;
+const SYNC_CONFIG_KEY = 'contasFirebaseConfig_v1';
+
+function loadSyncConfig() { try { return JSON.parse(localStorage.getItem(SYNC_CONFIG_KEY) || 'null'); } catch(e) { return null; } }
+function saveSyncConfig(cfg) { localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(cfg)); }
+function clearSyncConfig() { localStorage.removeItem(SYNC_CONFIG_KEY); }
+
+function openSyncModal() {
+  updateSyncStatus();
+  const cfg = loadSyncConfig();
+  if (cfg) document.getElementById('syncConfig').value = JSON.stringify(cfg, null, 2);
+  document.getElementById('syncModal').classList.add('active');
+}
+function closeSyncModal() { document.getElementById('syncModal').classList.remove('active'); }
+
+function updateSyncStatus() {
+  const box = document.getElementById('syncStatusBox');
+  const indicator = document.getElementById('syncIndicator');
+  if (firebaseUser) {
+    box.textContent = '✅ Sincronização ativa — ' + firebaseUser.email;
+    box.className = 'push-status granted';
+    indicator.style.background = 'var(--success)'; indicator.style.color = 'white';
+  } else if (loadSyncConfig()) {
+    box.textContent = '⚠️ Configuração salva, conectando...';
+    box.className = 'push-status default';
+  } else {
+    box.textContent = 'Sincronização desativada';
+    box.className = 'push-status default';
+    indicator.style.background = ''; indicator.style.color = '';
+  }
+}
+
+async function enableSync() {
+  const txt = document.getElementById('syncConfig').value.trim();
+  if (!txt) { showToast('Cole o firebaseConfig primeiro', 'danger'); return; }
+  let cfg;
+  try {
+    cfg = JSON.parse(txt);
+  } catch(e) {
+    try { cfg = (new Function('return ' + txt))(); }
+    catch(e2) { showToast('JSON inválido: ' + e2.message, 'danger'); return; }
+  }
+  if (!cfg.apiKey || !cfg.projectId) { showToast('Config inválida (faltam apiKey/projectId)', 'danger'); return; }
+  saveSyncConfig(cfg);
+  showToast('Conectando ao Firebase...', '');
+  closeSyncModal();
+  await initFirebase(cfg);
+}
+
+async function disableSync() {
+  if (firebaseUnsubscribe) { firebaseUnsubscribe(); firebaseUnsubscribe = null; }
+  if (firebaseAuth) { try { await firebaseAuth.signOut(); } catch(e){} }
+  firebaseApp = firebaseAuth = firebaseDb = firebaseUser = null;
+  clearSyncConfig();
+  updateSyncStatus();
+  showToast('Sincronização desativada', '');
+}
+
+async function initFirebase(cfg) {
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const { getFirestore, doc, setDoc, onSnapshot, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+
+    firebaseApp = initializeApp(cfg);
+    firebaseAuth = getAuth(firebaseApp);
+    firebaseDb = getFirestore(firebaseApp);
+
+    if (!state.currentUser) { showToast('Faça login local antes de ativar sync', 'danger'); return; }
+    const email = state.currentUser;
+    let fbPassword = sessionStorage.getItem('fb_pass_' + email);
+    if (!fbPassword) {
+      fbPassword = prompt('Crie/digite uma senha para a conta Firebase (mínimo 6 caracteres, use a MESMA no Mac e iPhone):');
+      if (!fbPassword || fbPassword.length < 6) { showToast('Senha inválida', 'danger'); return; }
+      sessionStorage.setItem('fb_pass_' + email, fbPassword);
+    }
+
+    try {
+      const cred = await signInWithEmailAndPassword(firebaseAuth, email, fbPassword);
+      firebaseUser = cred.user;
+    } catch(e) {
+      if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
+        const cred = await createUserWithEmailAndPassword(firebaseAuth, email, fbPassword);
+        firebaseUser = cred.user;
+        showToast('Conta Firebase criada', 'success');
+      } else {
+        sessionStorage.removeItem('fb_pass_' + email);
+        throw e;
+      }
+    }
+
+    const docRef = doc(firebaseDb, 'users', firebaseUser.uid, 'data', 'state');
+    firebaseUnsubscribe = onSnapshot(docRef, async (snap) => {
+      if (suppressNextSnapshot) { suppressNextSnapshot = false; return; }
+      if (snap.exists()) {
+        const remote = snap.data();
+        if (remote.bills) state.bills = remote.bills;
+        if (remote.categories) state.categories = remote.categories;
+        if (remote.users) state.users = remote.users;
+        saveStateLocal();
+        refreshUI();
+        console.log('Synced from cloud at', new Date());
+      } else {
+        await pushToCloud();
+      }
+    });
+
+    updateSyncStatus();
+    showToast('✅ Sincronização ativa!', 'success');
+  } catch(err) {
+    console.error('Firebase error:', err);
+    showToast('Erro Firebase: ' + (err.message || err), 'danger');
+  }
+}
+
+async function pushToCloud() {
+  if (!firebaseDb || !firebaseUser) return;
+  try {
+    const { doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    suppressNextSnapshot = true;
+    await setDoc(doc(firebaseDb, 'users', firebaseUser.uid, 'data', 'state'), {
+      bills: state.bills,
+      categories: state.categories,
+      users: state.users,
+      updatedAt: serverTimestamp(),
+      device: navigator.userAgent.substring(0, 100)
+    });
+  } catch(err) { console.warn('Push failed:', err); }
+}
+
+let cloudPushTimer = null;
+saveState = function() {
+  saveStateLocal();
+  if (firebaseUser && firebaseDb) {
+    clearTimeout(cloudPushTimer);
+    cloudPushTimer = setTimeout(pushToCloud, 800);
+  }
+};
+
 loadState();
+window.addEventListener('load', () => {
+  const cfg = loadSyncConfig();
+  if (cfg && state.currentUser) setTimeout(() => initFirebase(cfg), 1500);
+});
 </script>
 </body>
 </html>
