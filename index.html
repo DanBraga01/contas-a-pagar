@@ -947,16 +947,37 @@ function updateSyncStatus() {
 }
 
 async function enableSync() {
-  const txt = document.getElementById('syncConfig').value.trim();
+  let txt = document.getElementById('syncConfig').value.trim();
   if (!txt) { showToast('Cole o firebaseConfig primeiro', 'danger'); return; }
-  let cfg;
-  try {
-    cfg = JSON.parse(txt);
-  } catch(e) {
-    try { cfg = (new Function('return ' + txt))(); }
-    catch(e2) { showToast('JSON inválido: ' + e2.message, 'danger'); return; }
+
+  // Limpeza: aceita tanto o objeto JSON puro quanto o snippet JavaScript do Firebase Console
+  // Remove "const firebaseConfig =", "var ...", "let ...", e ";" final
+  txt = txt.replace(/^\s*(const|let|var)\s+\w+\s*=\s*/i, '').replace(/;\s*$/, '').trim();
+  // Extrai apenas o primeiro objeto {...} caso tenha lixo antes/depois
+  const match = txt.match(/\{[\s\S]*\}/);
+  if (match) txt = match[0];
+
+  let cfg = null;
+  // 1) Tenta JSON.parse (espera chaves com aspas)
+  try { cfg = JSON.parse(txt); } catch(e1) {
+    // 2) Tenta como objeto JavaScript (chaves sem aspas, aspas simples, etc)
+    try { cfg = (new Function('return (' + txt + ')'))(); }
+    catch(e2) {
+      // 3) Última tentativa: adicionar aspas nas chaves automaticamente
+      try {
+        const fixed = txt.replace(/([\{,]\s*)([a-zA-Z_$][\w$]*)\s*:/g, '$1"$2":').replace(/'/g, '"');
+        cfg = JSON.parse(fixed);
+      } catch(e3) {
+        showToast('Config inválida. Cole o objeto firebaseConfig (do { ao }).', 'danger');
+        console.error('Parse errors:', e1, e2, e3);
+        return;
+      }
+    }
   }
-  if (!cfg.apiKey || !cfg.projectId) { showToast('Config inválida (faltam apiKey/projectId)', 'danger'); return; }
+  if (!cfg || !cfg.apiKey || !cfg.projectId) {
+    showToast('Config inválida (faltam apiKey/projectId)', 'danger');
+    return;
+  }
   saveSyncConfig(cfg);
   showToast('Conectando ao Firebase...', '');
   closeSyncModal();
