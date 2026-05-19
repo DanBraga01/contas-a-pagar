@@ -1,5 +1,5 @@
-// Service Worker - Contas a Pagar
-const CACHE_VERSION = 'contas-v1.0.0';
+// Service Worker - Contas a Pagar v1.1
+const CACHE_VERSION = 'contas-v1.1.1';
 const ASSETS = [
   './',
   './index.html',
@@ -11,19 +11,15 @@ const ASSETS = [
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'
 ];
 
-// INSTALL: cache app shell
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_VERSION).then((cache) => {
-      return cache.addAll(ASSETS).catch(err => {
-        console.warn('Cache failed for some assets:', err);
-      });
-    })
+    caches.open(CACHE_VERSION).then((cache) =>
+      cache.addAll(ASSETS).catch(err => console.warn('Cache failed:', err))
+    )
   );
   self.skipWaiting();
 });
 
-// ACTIVATE: clear old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -33,23 +29,21 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// FETCH: cache-first strategy
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return cached || fetch(event.request).then((response) => {
+    caches.match(event.request).then((cached) =>
+      cached || fetch(event.request).then((response) => {
         if (response.ok && (event.request.url.startsWith(self.location.origin) || event.request.url.includes('jsdelivr'))) {
           const clone = response.clone();
           caches.open(CACHE_VERSION).then((cache) => cache.put(event.request, clone));
         }
         return response;
-      }).catch(() => cached);
-    })
+      }).catch(() => cached)
+    )
   );
 });
 
-// PUSH event - for future server-side push integration
 self.addEventListener('push', (event) => {
   let data = { title: 'Contas a Pagar', body: 'Você tem contas próximas do vencimento' };
   if (event.data) {
@@ -67,22 +61,18 @@ self.addEventListener('push', (event) => {
   );
 });
 
-// Notification click - open the app
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
     clients.matchAll({ type: 'window' }).then((clientList) => {
       for (const client of clientList) {
-        if (client.url.includes('index.html') && 'focus' in client) {
-          return client.focus();
-        }
+        if (client.url.includes('index.html') && 'focus' in client) return client.focus();
       }
       if (clients.openWindow) return clients.openWindow('./index.html');
     })
   );
 });
 
-// Message from app: schedule a notification (we use this for catch-up reminders)
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
     const { title, body, tag } = event.data;
