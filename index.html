@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>Contas a Pagar</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4f46e5">
+<meta name="description" content="Controle de contas a pagar com lembretes push">
+
+<!-- iOS PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Contas">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+
+<!-- Icons -->
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
+
+<!-- iOS Splash Screens -->
+<link rel="apple-touch-startup-image" href="icons/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+<link rel="apple-touch-startup-image" href="icons/splash-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)">
+<link rel="apple-touch-startup-image" href="icons/splash-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)">
+<link rel="apple-touch-startup-image" href="icons/splash-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #f5f7fb; --card: #ffffff; --primary: #4f46e5; --primary-dark: #4338ca;
+    --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+    --text: #1f2937; --text-light: #6b7280; --border: #e5e7eb;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --safe-top: env(safe-area-inset-top, 0); --safe-bot: env(safe-area-inset-bottom, 0);
+  }
+  body { background: var(--bg); color: var(--text); min-height: 100vh; min-height: 100dvh; }
+
+  /* LOGIN */
+  .login-container { min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; padding-top: calc(20px + var(--safe-top)); padding-bottom: calc(20px + var(--safe-bot)); }
+  .login-box { background: white; border-radius: 16px; padding: 32px 28px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .login-box h1 { font-size: 26px; margin-bottom: 8px; text-align: center; }
+  .login-box .subtitle { color: var(--text-light); text-align: center; margin-bottom: 24px; font-size: 14px; }
+  .tab-buttons { display: flex; gap: 8px; margin-bottom: 20px; background: #f3f4f6; padding: 4px; border-radius: 10px; }
+  .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-weight: 500; color: var(--text-light); transition: all 0.2s; font-size: 14px; }
+  .tab-btn.active { background: white; color: var(--primary); box-shadow: var(--shadow); }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 16px; transition: all 0.2s; background: white; -webkit-appearance: none; appearance: none; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+  .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-primary:hover, .btn-primary:active { background: var(--primary-dark); }
+  .error-msg { color: var(--danger); font-size: 13px; margin-top: 10px; text-align: center; min-height: 18px; }
+
+  /* APP */
+  .app { display: none; padding-bottom: var(--safe-bot); }
+  .app.active { display: block; }
+  .header { background: white; padding: 12px 20px; padding-top: calc(12px + var(--safe-top)); box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; gap: 8px; flex-wrap: wrap; }
+  .header-title { display: flex; align-items: center; gap: 12px; }
+  .header-title h1 { font-size: 18px; color: var(--primary); }
+  .header-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .header-user { font-size: 12px; color: var(--text-light); margin-right: 4px; }
+  .btn-icon { background: var(--bg); border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text); display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; white-space: nowrap; }
+  .btn-icon:hover, .btn-icon:active { background: var(--border); }
+  .btn-icon.btn-primary-icon { background: var(--primary); color: white; }
+  .btn-icon.btn-primary-icon:hover, .btn-icon.btn-primary-icon:active { background: var(--primary-dark); }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 16px 20px; }
+
+  /* SUMMARY CARDS */
+  .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .summary-card { background: var(--card); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); border-left: 4px solid var(--primary); }
+  .summary-card.success { border-left-color: var(--success); }
+  .summary-card.warning { border-left-color: var(--warning); }
+  .summary-card.danger { border-left-color: var(--danger); }
+  .summary-card .label { font-size: 11px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .summary-card .value { font-size: 20px; font-weight: 700; }
+  .summary-card .count { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 6px; margin-bottom: 16px; background: white; padding: 6px; border-radius: 12px; box-shadow: var(--shadow); flex-wrap: wrap; overflow-x: auto; }
+  .filter-btn { padding: 8px 14px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-light); transition: all 0.2s; white-space: nowrap; }
+  .filter-btn:hover { background: var(--bg); }
+  .filter-btn.active { background: var(--primary); color: white; }
+
+  /* MAIN GRID */
+  .main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 16px; }
+  @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
+
+  /* BILLS LIST */
+  .bills-section { background: white; border-radius: 12px; padding: 16px; box-shadow: var(--shadow); }
+  .section-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .bills-list { display: flex; flex-direction: column; gap: 10px; }
+  .bill-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; transition: all 0.2s; flex-wrap: wrap; }
+  .bill-card:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(79,70,229,0.08); }
+  .bill-info { flex: 1; min-width: 0; }
+  .bill-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .bill-meta { font-size: 12px; color: var(--text-light); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .bill-category { background: var(--bg); padding: 2px 8px; border-radius: 6px; font-size: 11px; }
+  .bill-amount { font-weight: 700; font-size: 16px; }
+  .bill-actions { display: flex; gap: 6px; }
+  .bill-status-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .status-pago { background: #d1fae5; color: #065f46; }
+  .status-apagar { background: #fef3c7; color: #92400e; }
+  .status-vencido { background: #fee2e2; color: #991b1b; }
+  .status-recorrente { background: #ede9fe; color: #5b21b6; font-size: 10px; }
+  .btn-action { border: none; background: var(--bg); padding: 7px 11px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.2s; }
+  .btn-action:hover, .btn-action:active { background: var(--border); }
+  .btn-action.success { background: var(--success); color: white; }
+  .btn-action.danger { background: var(--danger); color: white; }
+
+  /* SIDEBAR */
+  .sidebar { display: flex; flex-direction: column; gap: 14px; }
+  .sidebar-card { background: white; border-radius: 12px; padding: 16px; box-shadow: var(--shadow); }
+  .sidebar-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; padding-top: calc(20px + var(--safe-top)); padding-bottom: calc(20px + var(--safe-bot)); }
+  .modal-overlay.active { display: flex; }
+  .modal { background: white; border-radius: 16px; padding: 24px; width: 100%; max-width: 520px; max-height: 90vh; max-height: 90dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .modal-header h2 { font-size: 18px; }
+  .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-light); padding: 4px 8px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+  .checkbox-group { display: flex; align-items: center; gap: 8px; }
+  .checkbox-group input { width: auto; }
+  .checkbox-group label { margin-bottom: 0; cursor: pointer; font-size: 14px; }
+
+  /* CATEGORIES */
+  .category-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; margin-bottom: 12px; }
+  .category-chip { background: var(--bg); padding: 6px 10px; border-radius: 6px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+  .category-chip button { background: none; border: none; cursor: pointer; color: var(--danger); font-weight: bold; padding: 0 4px; }
+  .add-category-row { display: flex; gap: 6px; margin-top: 8px; }
+  .add-category-row input { flex: 1; padding: 8px 10px; font-size: 14px; }
+  .add-category-row button { padding: 8px 14px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; }
+
+  /* PUSH CONFIG */
+  .push-status { padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; }
+  .push-status.granted { background: #d1fae5; color: #065f46; }
+  .push-status.denied { background: #fee2e2; color: #991b1b; }
+  .push-status.default { background: #fef3c7; color: #92400e; }
+
+  /* NOTIFICATION ROWS */
+  .notif-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto auto; gap: 8px; align-items: end; background: var(--bg); padding: 10px; border-radius: 8px; margin-bottom: 8px; }
+  .notif-row .notif-field label { font-size: 11px; color: var(--text-light); margin-bottom: 4px; display: block; }
+  .notif-row .notif-field input, .notif-row .notif-field select { width: 100%; padding: 8px 9px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px; background: white; }
+  .notif-row .notif-test, .notif-row .notif-remove { border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .notif-row .notif-test { background: var(--primary); color: white; }
+  .notif-row .notif-remove { background: var(--danger); color: white; }
+  @media (max-width: 600px) { .notif-row { grid-template-columns: 1fr 1fr; } }
+  .notif-empty { font-size: 12px; color: var(--text-light); padding: 12px; text-align: center; background: var(--bg); border-radius: 8px; }
+
+  /* CHART */
+  .chart-container { position: relative; height: 200px; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: calc(20px + var(--safe-bot)); left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text); color: white; padding: 14px 22px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2000; opacity: 0; transition: all 0.3s; max-width: 340px; font-size: 14px; text-align: center; }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.success { background: var(--success); }
+  .toast.danger { background: var(--danger); }
+
+  /* INSTALL BANNER */
+  .install-banner { display: none; position: fixed; bottom: calc(16px + var(--safe-bot)); left: 16px; right: 16px; background: var(--primary); color: white; padding: 12px 16px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 999; align-items: center; gap: 12px; font-size: 13px; }
+  .install-banner.show { display: flex; }
+  .install-banner button { background: white; color: var(--primary); border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; }
+  .install-banner .close-banner { background: transparent; color: white; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="login-container">
+  <div class="login-box">
+    <h1>💰 Contas a Pagar</h1>
+    <p class="subtitle">Controle suas finanças com lembretes inteligentes</p>
+    <div class="tab-buttons">
+      <button class="tab-btn active" data-tab="login">Entrar</button>
+      <button class="tab-btn" data-tab="register">Criar conta</button>
+    </div>
+    <form id="loginForm">
+      <div class="form-group"><label>E-mail</label><input type="email" id="loginEmail" required autocomplete="email"></div>
+      <div class="form-group"><label>Senha</label><input type="password" id="loginPassword" required autocomplete="current-password"></div>
+      <button type="submit" class="btn-primary">Entrar</button>
+      <p class="error-msg" id="loginError"></p>
+    </form>
+    <form id="registerForm" style="display:none;">
+      <div class="form-group"><label>E-mail</label><input type="email" id="registerEmail" required autocomplete="email"></div>
+      <div class="form-group"><label>Senha (mínimo 6 caracteres)</label><input type="password" id="registerPassword" minlength="6" required autocomplete="new-password"></div>
+      <div class="form-group"><label>Confirmar senha</label><input type="password" id="registerConfirm" minlength="6" required autocomplete="new-password"></div>
+      <button type="submit" class="btn-primary">Criar conta</button>
+      <p class="error-msg" id="registerError"></p>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app">
+  <header class="header">
+    <div class="header-title"><h1>💰 Contas</h1></div>
+    <div class="header-actions">
+      <span class="header-user" id="headerUser"></span>
+      <button class="btn-icon" onclick="openCategoryModal()">🏷️</button>
+      <button class="btn-icon" onclick="openPushModal()">🔔</button>
+      <button class="btn-icon btn-primary-icon" onclick="openBillModal()">+ Nova</button>
+      <button class="btn-icon" onclick="logout()">Sair</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="summary" id="summary"></div>
+    <div class="filters">
+      <button class="filter-btn active" data-filter="todas">Todas</button>
+      <button class="filter-btn" data-filter="apagar">A pagar</button>
+      <button class="filter-btn" data-filter="vencidas">Vencidas</button>
+      <button class="filter-btn" data-filter="pagas">Pagas</button>
+      <button class="filter-btn" data-filter="historico">Histórico</button>
+      <select id="filterCategory" style="margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:white;">
+        <option value="">Todas categorias</option>
+      </select>
+      <select id="filterCostCenter" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:white;">
+        <option value="">Todos centros custo</option>
+      </select>
+    </div>
+    <div class="main-grid">
+      <div class="bills-section">
+        <div class="section-title"><span id="listTitle">Todas as contas</span><span id="listCount" style="font-size:12px;color:var(--text-light);font-weight:400;"></span></div>
+        <div class="bills-list" id="billsList"></div>
+      </div>
+      <aside class="sidebar">
+        <div class="sidebar-card"><h3>📊 Gastos por categoria (mês atual)</h3><div class="chart-container"><canvas id="categoryChart"></canvas></div></div>
+        <div class="sidebar-card"><h3>📅 Próximos 7 dias</h3><div id="upcomingList" style="display:flex;flex-direction:column;gap:8px;font-size:13px;"></div></div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- BILL MODAL -->
+<div class="modal-overlay" id="billModal">
+  <div class="modal">
+    <div class="modal-header"><h2 id="billModalTitle">Nova conta</h2><button class="modal-close" onclick="closeBillModal()">×</button></div>
+    <form id="billForm">
+      <input type="hidden" id="billId">
+      <div class="form-group"><label>Descrição</label><input type="text" id="billName" required placeholder="Ex: Conta de luz"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Valor (R$)</label><input type="number" id="billAmount" step="0.01" min="0" required placeholder="0,00" inputmode="decimal"></div>
+        <div class="form-group"><label>Vencimento</label><input type="date" id="billDueDate" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Categoria</label><select id="billCategory" required></select></div>
+        <div class="form-group"><label>Centro de Custos</label><input type="text" id="billCostCenter" list="costCenterList" placeholder="Ex: Pessoal, Empresa..."><datalist id="costCenterList"></datalist></div>
+      </div>
+      <div class="form-group"><label>Observações (opcional)</label><textarea id="billNotes" rows="2" placeholder="Detalhes adicionais..."></textarea></div>
+      <div class="form-group"><div class="checkbox-group"><input type="checkbox" id="billRecurring"><label for="billRecurring">Conta recorrente (mensal)</label></div></div>
+      <div class="form-group" style="border-top:1px solid var(--border);padding-top:14px;margin-top:6px;">
+        <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span>🔔 Avisos push desta conta</span>
+          <button type="button" class="btn-icon btn-primary-icon" style="font-size:12px;padding:6px 10px;" onclick="addNotificationRow()">+ Adicionar</button>
+        </label>
+        <p style="font-size:12px;color:var(--text-light);margin-bottom:10px;">Cada aviso pode ter dias antes, hora e som próprios.</p>
+        <div id="notificationsContainer"></div>
+      </div>
+      <button type="submit" class="btn-primary">Salvar</button>
+    </form>
+  </div>
+</div>
+
+<!-- CATEGORY MODAL -->
+<div class="modal-overlay" id="categoryModal">
+  <div class="modal">
+    <div class="modal-header"><h2>Gerenciar categorias</h2><button class="modal-close" onclick="closeCategoryModal()">×</button></div>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Adicione, remova ou crie novas categorias para organizar suas contas.</p>
+    <div class="category-list" id="categoryList"></div>
+    <div class="add-category-row"><input type="text" id="newCategoryInput" placeholder="Nova categoria..."><button onclick="addCategory()">Adicionar</button></div>
+  </div>
+</div>
+
+<!-- PUSH MODAL -->
+<div class="modal-overlay" id="pushModal">
+  <div class="modal">
+    <div class="modal-header"><h2>🔔 Push</h2><button class="modal-close" onclick="closePushModal()">×</button></div>
+    <div id="pushStatusBox" class="push-status default">Permissão de notificação: não solicitada</div>
+    <button class="btn-primary" id="requestPermBtn" style="margin-bottom:16px;" onclick="requestNotificationPermission()">Solicitar permissão</button>
+    <div class="form-group"><div class="checkbox-group"><input type="checkbox" id="pushEnabled"><label for="pushEnabled">Ativar lembretes push (chave geral)</label></div><p style="font-size:12px;color:var(--text-light);margin-top:6px;">Os avisos (dias, hora, som) são configurados em cada conta.</p></div>
+    <button class="btn-primary" onclick="savePushSettings()">Salvar</button>
+    <p style="font-size:11px;color:var(--text-light);margin-top:12px;">⚠️ Mantenha o app aberto para receber os avisos. Quando você abrir o app, ele também mostra lembretes acumulados desde a última vez.</p>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- iOS Install Banner -->
+<div class="install-banner" id="installBanner">
+  <div style="flex:1;">
+    📲 Adicione à Tela de Início: toque em <strong>Compartilhar</strong> → <strong>"Adicionar à Tela de Início"</strong>
+  </div>
+  <button class="close-banner" onclick="dismissInstallBanner()">×</button>
+</div>
+
+<script>
+// ============= STATE =============
+const STORAGE_KEY = 'controleContasApp_v1';
+let state = {
+  users: {},
+  currentUser: null,
+  bills: [],
+  categories: ['Moradia','Energia','Água','Internet','Cartão','Streaming','Alimentação','Transporte','Saúde','Educação','Outros'],
+  pushSettings: { enabled: false },
+  sentNotifications: {},
+  currentFilter: 'todas',
+  currentCategoryFilter: '',
+  currentCostCenterFilter: '',
+  editingBillId: null
+};
+
+// ============= PERSISTENCE =============
+function saveState() {
+  const persistable = { users: state.users, bills: state.bills, categories: state.categories, pushSettings: state.pushSettings, sentNotifications: state.sentNotifications };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(persistable)); } catch(e) { console.warn(e); }
+}
+function loadState() {
+  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) Object.assign(state, JSON.parse(raw)); } catch(e) { console.warn(e); }
+}
+
+// ============= UTILS =============
+async function sha256(text) {
+  const buf = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function formatBRL(v) { return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
+function todayISO() { return new Date().toISOString().slice(0,10); }
+function parseDate(iso) { const [y,m,d] = iso.split('-').map(Number); return new Date(y, m-1, d); }
+function daysBetween(a, b) { return Math.floor((b - a) / (1000*60*60*24)); }
+function formatDate(iso) { return parseDate(iso).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'}); }
+function getBillStatus(bill) { if (bill.paid) return 'pago'; const today = parseDate(todayISO()); const due = parseDate(bill.dueDate); return due < today ? 'vencido' : 'apagar'; }
+function showToast(msg, type = '') { const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast show ' + type; setTimeout(() => t.classList.remove('show'), 3000); }
+
+// ============= LOGIN =============
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+  });
+});
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+  const user = state.users[email];
+  if (!user) { errEl.textContent = 'E-mail não cadastrado.'; return; }
+  const hash = await sha256(password + ':' + email);
+  if (hash !== user.passwordHash) { errEl.textContent = 'Senha incorreta.'; return; }
+  state.currentUser = email;
+  enterApp();
+});
+
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('registerEmail').value.trim().toLowerCase();
+  const password = document.getElementById('registerPassword').value;
+  const confirm = document.getElementById('registerConfirm').value;
+  const errEl = document.getElementById('registerError');
+  errEl.textContent = '';
+  if (password !== confirm) { errEl.textContent = 'As senhas não conferem.'; return; }
+  if (state.users[email]) { errEl.textContent = 'E-mail já cadastrado.'; return; }
+  const hash = await sha256(password + ':' + email);
+  state.users[email] = { passwordHash: hash, createdAt: new Date().toISOString() };
+  state.currentUser = email;
+  saveState();
+  showToast('Conta criada com sucesso!', 'success');
+  enterApp();
+});
+
+function enterApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  document.getElementById('headerUser').textContent = '👤 ' + state.currentUser.split('@')[0];
+  refreshUI();
+  // On enter, check for missed notifications (catch-up)
+  catchUpNotifications();
+}
+function logout() {
+  state.currentUser = null;
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('loginPassword').value = '';
+}
+
+// ============= BILLS =============
+function openBillModal(billId = null) {
+  state.editingBillId = billId;
+  const form = document.getElementById('billForm');
+  form.reset();
+  populateCategorySelect();
+  document.getElementById('notificationsContainer').innerHTML = '';
+  if (billId) {
+    const b = state.bills.find(x => x.id === billId);
+    document.getElementById('billModalTitle').textContent = 'Editar conta';
+    document.getElementById('billId').value = b.id;
+    document.getElementById('billName').value = b.name;
+    document.getElementById('billAmount').value = b.amount;
+    document.getElementById('billDueDate').value = b.dueDate;
+    document.getElementById('billCategory').value = b.category;
+    document.getElementById('billNotes').value = b.notes || '';
+    document.getElementById('billCostCenter').value = b.costCenter || '';
+    document.getElementById('billRecurring').checked = !!b.recurring;
+    (b.notifications || []).forEach(n => addNotificationRow(n));
+  } else {
+    document.getElementById('billModalTitle').textContent = 'Nova conta';
+    document.getElementById('billDueDate').value = todayISO();
+    addNotificationRow({ daysBefore: 3, time: '09:00', sound: 'ding' });
+  }
+  populateCostCenterDatalist();
+  renderNotifEmpty();
+  document.getElementById('billModal').classList.add('active');
+}
+function closeBillModal() { document.getElementById('billModal').classList.remove('active'); }
+
+function addNotificationRow(data = { daysBefore: 1, time: '09:00', sound: 'ding' }) {
+  const container = document.getElementById('notificationsContainer');
+  const empty = container.querySelector('.notif-empty'); if (empty) empty.remove();
+  const row = document.createElement('div');
+  row.className = 'notif-row';
+  row.dataset.notifId = data.id || uid();
+  row.innerHTML = `
+    <div class="notif-field"><label>Dias antes</label><input type="number" class="notif-days" min="0" max="60" value="${data.daysBefore}" required></div>
+    <div class="notif-field"><label>Hora</label><input type="time" class="notif-time" value="${data.time}" required></div>
+    <div class="notif-field"><label>Som</label><select class="notif-sound">
+      <option value="beep" ${data.sound==='beep'?'selected':''}>Beep</option>
+      <option value="ding" ${data.sound==='ding'?'selected':''}>Ding</option>
+      <option value="chime" ${data.sound==='chime'?'selected':''}>Chime</option>
+      <option value="alert" ${data.sound==='alert'?'selected':''}>Alerta</option>
+      <option value="none" ${data.sound==='none'?'selected':''}>Sem som</option>
+    </select></div>
+    <button type="button" class="notif-test" title="Testar som" onclick="testNotifSound(this)">▶</button>
+    <button type="button" class="notif-remove" title="Remover" onclick="removeNotificationRow(this)">×</button>`;
+  container.appendChild(row);
+}
+function removeNotificationRow(btn) { btn.closest('.notif-row').remove(); renderNotifEmpty(); }
+function renderNotifEmpty() {
+  const container = document.getElementById('notificationsContainer');
+  if (container.querySelectorAll('.notif-row').length === 0) container.innerHTML = '<div class="notif-empty">Nenhum aviso — clique em "+ Adicionar"</div>';
+}
+function testNotifSound(btn) { playSound(btn.closest('.notif-row').querySelector('.notif-sound').value); }
+function collectNotificationsFromForm() {
+  return Array.from(document.querySelectorAll('#notificationsContainer .notif-row')).map(row => ({
+    id: row.dataset.notifId,
+    daysBefore: parseInt(row.querySelector('.notif-days').value) || 0,
+    time: row.querySelector('.notif-time').value || '09:00',
+    sound: row.querySelector('.notif-sound').value || 'ding'
+  }));
+}
+
+document.getElementById('billForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const id = document.getElementById('billId').value || uid();
+  const notifications = collectNotificationsFromForm();
+  const billData = {
+    id, name: document.getElementById('billName').value.trim(),
+    amount: parseFloat(document.getElementById('billAmount').value),
+    dueDate: document.getElementById('billDueDate').value,
+    category: document.getElementById('billCategory').value,
+    costCenter: document.getElementById('billCostCenter').value.trim(),
+    notes: document.getElementById('billNotes').value.trim(),
+    recurring: document.getElementById('billRecurring').checked,
+    notifications, paid: false, paidAt: null,
+    createdAt: new Date().toISOString(), user: state.currentUser
+  };
+  const existing = state.bills.find(b => b.id === id);
+  if (existing) {
+    Object.assign(existing, { name: billData.name, amount: billData.amount, dueDate: billData.dueDate, category: billData.category, costCenter: billData.costCenter, notes: billData.notes, recurring: billData.recurring, notifications: billData.notifications });
+    showToast('Conta atualizada', 'success');
+  } else {
+    state.bills.push(billData);
+    showToast('Conta cadastrada', 'success');
+  }
+  saveState();
+  closeBillModal();
+  refreshUI();
+});
+
+function markPaid(billId) {
+  const b = state.bills.find(x => x.id === billId); if (!b) return;
+  b.paid = true; b.paidAt = new Date().toISOString();
+  if (b.recurring) {
+    const d = parseDate(b.dueDate); d.setMonth(d.getMonth() + 1);
+    state.bills.push({
+      id: uid(), name: b.name, amount: b.amount, dueDate: d.toISOString().slice(0,10),
+      category: b.category, costCenter: b.costCenter, notes: b.notes, recurring: true,
+      notifications: (b.notifications || []).map(n => ({...n, id: uid()})),
+      paid: false, paidAt: null, createdAt: new Date().toISOString(), user: state.currentUser
+    });
+    showToast('Pago. Próxima parcela gerada.', 'success');
+  } else showToast('Pagamento registrado', 'success');
+  saveState(); refreshUI();
+}
+function unmarkPaid(billId) { const b = state.bills.find(x => x.id === billId); if (b) { b.paid = false; b.paidAt = null; saveState(); refreshUI(); } }
+function deleteBill(billId) { if (!confirm('Excluir esta conta?')) return; state.bills = state.bills.filter(b => b.id !== billId); saveState(); refreshUI(); showToast('Conta excluída'); }
+
+// ============= CATEGORIES =============
+function openCategoryModal() { renderCategoryList(); document.getElementById('categoryModal').classList.add('active'); }
+function closeCategoryModal() { document.getElementById('categoryModal').classList.remove('active'); }
+function renderCategoryList() {
+  document.getElementById('categoryList').innerHTML = state.categories.map(c => `<div class="category-chip"><span>${c}</span><button onclick="removeCategory('${c.replace(/'/g, "\\'")}')">×</button></div>`).join('');
+}
+function addCategory() {
+  const input = document.getElementById('newCategoryInput'); const val = input.value.trim();
+  if (!val) return;
+  if (state.categories.includes(val)) { showToast('Categoria já existe', 'danger'); return; }
+  state.categories.push(val); input.value = ''; saveState();
+  renderCategoryList(); populateCategorySelect(); populateCategoryFilter();
+}
+function removeCategory(cat) {
+  if (state.bills.some(b => b.category === cat) && !confirm(`Categoria "${cat}" em uso. Remover?`)) return;
+  state.categories = state.categories.filter(c => c !== cat); saveState();
+  renderCategoryList(); populateCategorySelect(); populateCategoryFilter();
+}
+function populateCategorySelect() { document.getElementById('billCategory').innerHTML = state.categories.map(c => `<option value="${c}">${c}</option>`).join(''); }
+function populateCategoryFilter() {
+  const sel = document.getElementById('filterCategory'); const current = sel.value;
+  sel.innerHTML = '<option value="">Todas categorias</option>' + state.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+  sel.value = current;
+}
+function getCostCenters() {
+  const set = new Set();
+  state.bills.filter(b => b.user === state.currentUser).forEach(b => { if (b.costCenter && b.costCenter.trim()) set.add(b.costCenter.trim()); });
+  return Array.from(set).sort();
+}
+function populateCostCenterDatalist() { const dl = document.getElementById('costCenterList'); if (dl) dl.innerHTML = getCostCenters().map(c => `<option value="${c}">`).join(''); }
+function populateCostCenterFilter() {
+  const sel = document.getElementById('filterCostCenter'); const current = sel.value;
+  sel.innerHTML = '<option value="">Todos centros custo</option>' + getCostCenters().map(c => `<option value="${c}">${c}</option>`).join('');
+  sel.value = current;
+}
+
+// ============= FILTERS =============
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); state.currentFilter = btn.dataset.filter; renderBills();
+    document.getElementById('listTitle').textContent = btn.textContent;
+  });
+});
+document.getElementById('filterCategory').addEventListener('change', e => { state.currentCategoryFilter = e.target.value; renderBills(); });
+document.getElementById('filterCostCenter').addEventListener('change', e => { state.currentCostCenterFilter = e.target.value; renderBills(); });
+
+function filterBills(bills) {
+  let filtered = bills.filter(b => b.user === state.currentUser);
+  if (state.currentCategoryFilter) filtered = filtered.filter(b => b.category === state.currentCategoryFilter);
+  if (state.currentCostCenterFilter) filtered = filtered.filter(b => b.costCenter === state.currentCostCenterFilter);
+  switch (state.currentFilter) {
+    case 'apagar': return filtered.filter(b => !b.paid && getBillStatus(b) === 'apagar');
+    case 'vencidas': return filtered.filter(b => !b.paid && getBillStatus(b) === 'vencido');
+    case 'pagas': return filtered.filter(b => b.paid);
+    case 'historico': return filtered.filter(b => b.paid).sort((a,b) => new Date(b.paidAt) - new Date(a.paidAt));
+    default: return filtered;
+  }
+}
+
+// ============= RENDER =============
+function renderBills() {
+  const bills = filterBills(state.bills).sort((a, b) => state.currentFilter === 'historico' ? 0 : parseDate(a.dueDate) - parseDate(b.dueDate));
+  const list = document.getElementById('billsList');
+  document.getElementById('listCount').textContent = bills.length + ' conta(s)';
+  if (bills.length === 0) { list.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>Nenhuma conta nesta categoria.</p></div>`; return; }
+  list.innerHTML = bills.map(b => {
+    const status = getBillStatus(b);
+    const today = parseDate(todayISO()); const due = parseDate(b.dueDate);
+    const diff = daysBetween(today, due);
+    let dueLabel = formatDate(b.dueDate);
+    if (!b.paid) {
+      if (diff === 0) dueLabel += ' (hoje)';
+      else if (diff > 0) dueLabel += ` (em ${diff}d)`;
+      else dueLabel += ` (${Math.abs(diff)}d atrás)`;
+    }
+    return `<div class="bill-card">
+      <div class="bill-info">
+        <div class="bill-name">${b.name}${b.recurring ? '<span class="bill-status-badge status-recorrente" style="margin-left:6px;">🔁</span>' : ''}</div>
+        <div class="bill-meta">
+          <span class="bill-category">${b.category}</span>
+          ${b.costCenter ? `<span class="bill-category" style="background:#ede9fe;color:#5b21b6;">🏷️ ${b.costCenter}</span>` : ''}
+          <span>📅 ${dueLabel}</span>
+          <span class="bill-status-badge status-${status}">${status === 'pago' ? '✓ Pago' : status === 'vencido' ? '⚠ Vencido' : '◷ A pagar'}</span>
+          ${(b.notifications && b.notifications.length) ? `<span title="${b.notifications.length} aviso(s)">🔔 ${b.notifications.length}</span>` : ''}
+          ${b.notes ? `<span title="${b.notes}">📝</span>` : ''}
+        </div>
+      </div>
+      <div class="bill-amount">${formatBRL(b.amount)}</div>
+      <div class="bill-actions">
+        ${!b.paid ? `<button class="btn-action success" onclick="markPaid('${b.id}')">✓</button>` : `<button class="btn-action" onclick="unmarkPaid('${b.id}')">↺</button>`}
+        <button class="btn-action" onclick="openBillModal('${b.id}')">✎</button>
+        <button class="btn-action danger" onclick="deleteBill('${b.id}')">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSummary() {
+  const userBills = state.bills.filter(b => b.user === state.currentUser);
+  const now = new Date(); const cm = now.getMonth(); const cy = now.getFullYear();
+  const monthBills = userBills.filter(b => { const d = parseDate(b.dueDate); return d.getMonth() === cm && d.getFullYear() === cy; });
+  const total = monthBills.reduce((s, b) => s + b.amount, 0);
+  const pago = monthBills.filter(b => b.paid).reduce((s, b) => s + b.amount, 0);
+  const apagar = monthBills.filter(b => !b.paid && getBillStatus(b) !== 'vencido').reduce((s, b) => s + b.amount, 0);
+  const vencido = monthBills.filter(b => !b.paid && getBillStatus(b) === 'vencido').reduce((s, b) => s + b.amount, 0);
+  document.getElementById('summary').innerHTML = `
+    <div class="summary-card"><div class="label">Total do mês</div><div class="value">${formatBRL(total)}</div><div class="count">${monthBills.length} conta(s)</div></div>
+    <div class="summary-card success"><div class="label">Pagas</div><div class="value">${formatBRL(pago)}</div><div class="count">${monthBills.filter(b => b.paid).length} conta(s)</div></div>
+    <div class="summary-card warning"><div class="label">A pagar</div><div class="value">${formatBRL(apagar)}</div><div class="count">${monthBills.filter(b => !b.paid && getBillStatus(b) !== 'vencido').length} conta(s)</div></div>
+    <div class="summary-card danger"><div class="label">Vencidas</div><div class="value">${formatBRL(vencido)}</div><div class="count">${monthBills.filter(b => !b.paid && getBillStatus(b) === 'vencido').length} conta(s)</div></div>`;
+}
+
+let chart;
+function renderChart() {
+  const userBills = state.bills.filter(b => b.user === state.currentUser);
+  const now = new Date();
+  const monthBills = userBills.filter(b => { const d = parseDate(b.dueDate); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); });
+  const byCategory = {};
+  monthBills.forEach(b => { byCategory[b.category] = (byCategory[b.category] || 0) + b.amount; });
+  const labels = Object.keys(byCategory); const data = Object.values(byCategory);
+  const colors = ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6'];
+  const ctx = document.getElementById('categoryChart').getContext('2d');
+  if (chart) chart.destroy();
+  if (labels.length === 0) {
+    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    ctx.font = '13px sans-serif'; ctx.fillStyle = '#9ca3af'; ctx.textAlign = 'center';
+    ctx.fillText('Sem dados neste mês', ctx.canvas.width/2, 80);
+    return;
+  }
+  chart = new Chart(ctx, { type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors.slice(0, labels.length), borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } } }
+  });
+}
+
+function renderUpcoming() {
+  const userBills = state.bills.filter(b => b.user === state.currentUser && !b.paid);
+  const today = parseDate(todayISO());
+  const upcoming = userBills.filter(b => { const diff = daysBetween(today, parseDate(b.dueDate)); return diff >= 0 && diff <= 7; }).sort((a,b) => parseDate(a.dueDate) - parseDate(b.dueDate));
+  const list = document.getElementById('upcomingList');
+  if (upcoming.length === 0) { list.innerHTML = `<div style="color:var(--text-light);">Nenhum vencimento nos próximos 7 dias 🎉</div>`; return; }
+  list.innerHTML = upcoming.map(b => {
+    const diff = daysBetween(today, parseDate(b.dueDate));
+    const label = diff === 0 ? 'hoje' : `em ${diff}d`;
+    return `<div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--bg);border-radius:6px;"><span>${b.name} <small style="color:var(--text-light);">(${label})</small></span><strong>${formatBRL(b.amount)}</strong></div>`;
+  }).join('');
+}
+
+function refreshUI() {
+  populateCategorySelect(); populateCategoryFilter(); populateCostCenterFilter(); populateCostCenterDatalist();
+  renderSummary(); renderBills(); renderChart(); renderUpcoming();
+}
+
+// ============= PUSH NOTIFICATIONS =============
+function openPushModal() { updatePushStatus(); document.getElementById('pushEnabled').checked = state.pushSettings.enabled; document.getElementById('pushModal').classList.add('active'); }
+function closePushModal() { document.getElementById('pushModal').classList.remove('active'); }
+
+function updatePushStatus() {
+  const box = document.getElementById('pushStatusBox'); const btn = document.getElementById('requestPermBtn');
+  if (!('Notification' in window)) { box.textContent = '❌ Notificações não suportadas'; box.className = 'push-status denied'; btn.style.display = 'none'; return; }
+  const perm = Notification.permission;
+  if (perm === 'granted') { box.textContent = '✅ Permissão concedida'; box.className = 'push-status granted'; btn.style.display = 'none'; }
+  else if (perm === 'denied') { box.textContent = '❌ Permissão negada — habilite em Ajustes do iPhone ou Mac'; box.className = 'push-status denied'; btn.style.display = 'none'; }
+  else { box.textContent = '⚠️ Permissão não concedida'; box.className = 'push-status default'; btn.style.display = 'block'; }
+}
+
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) return;
+  const perm = await Notification.requestPermission();
+  updatePushStatus();
+  if (perm === 'granted') { try { new Notification('Contas a Pagar', { body: 'Lembretes ativados!', icon: 'icons/icon-192.png' }); } catch(e){} }
+}
+function savePushSettings() { state.pushSettings = { enabled: document.getElementById('pushEnabled').checked }; saveState(); closePushModal(); showToast('Configurações salvas', 'success'); }
+
+// ============= SOUND =============
+let audioCtx;
+function playSound(type) {
+  if (type === 'none') return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const presets = {
+      beep: [{f:880, d:0.15}],
+      ding: [{f:1318, d:0.1},{f:1046, d:0.4, delay:0.1}],
+      chime: [{f:523, d:0.3},{f:659, d:0.3, delay:0.2},{f:784, d:0.4, delay:0.4}],
+      alert: [{f:880, d:0.12},{f:660, d:0.12, delay:0.15},{f:880, d:0.12, delay:0.3},{f:660, d:0.12, delay:0.45}]
+    };
+    const preset = presets[type] || presets.ding;
+    preset.forEach(({f, d, delay = 0}) => {
+      const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+      osc.frequency.value = f; osc.type = 'sine';
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      const t0 = audioCtx.currentTime + delay;
+      gain.gain.setValueAtTime(0, t0);
+      gain.gain.linearRampToValueAtTime(0.3, t0 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + d);
+      osc.start(t0); osc.stop(t0 + d + 0.05);
+    });
+  } catch(e) { console.warn('Sound error', e); }
+}
+
+// ============= NOTIFICATION DISPATCH =============
+function showNotification(title, body, options = {}) {
+  // Prefer Service Worker notification (works better on mobile)
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', title, body, tag: options.tag });
+  } else if ('Notification' in window && Notification.permission === 'granted') {
+    try { new Notification(title, { body, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png', tag: options.tag, requireInteraction: options.requireInteraction }); } catch(e) {}
+  }
+}
+
+function checkNotifications() {
+  if (!state.pushSettings.enabled) return;
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  if (!state.currentUser) return;
+  const now = new Date(); const todayStr = todayISO(); const today = parseDate(todayStr);
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const userBills = state.bills.filter(b => b.user === state.currentUser && !b.paid);
+  let stateChanged = false;
+
+  userBills.forEach(bill => {
+    if (!bill.notifications || bill.notifications.length === 0) return;
+    const due = parseDate(bill.dueDate);
+    const diffToDue = daysBetween(today, due);
+    bill.notifications.forEach(notif => {
+      const isTargetDay = diffToDue === notif.daysBefore;
+      const shouldConsider = isTargetDay || (diffToDue < 0);
+      if (!shouldConsider) return;
+      const [hh, mm] = notif.time.split(':').map(Number);
+      const targetMinutes = hh * 60 + mm;
+      if (Math.abs(nowMinutes - targetMinutes) > 1) return;
+      const key = `${bill.id}__${notif.id}__${todayStr}`;
+      if (state.sentNotifications[key]) return;
+
+      const isOverdue = diffToDue < 0;
+      const when = diffToDue === 0 ? 'vence hoje' : diffToDue > 0 ? `vence em ${diffToDue}d` : `vencida há ${Math.abs(diffToDue)}d`;
+      const title = isOverdue ? `⚠️ ${bill.name} — VENCIDA` : `🔔 ${bill.name}`;
+      const body = `${when} — ${formatBRL(bill.amount)} • ${bill.category}`;
+      showNotification(title, body, { tag: key, requireInteraction: isOverdue });
+      playSound(notif.sound);
+      state.sentNotifications[key] = true;
+      stateChanged = true;
+    });
+  });
+
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 60);
+  const cutoffStr = cutoff.toISOString().slice(0,10);
+  Object.keys(state.sentNotifications).forEach(k => { const parts = k.split('__'); if (parts[2] && parts[2] < cutoffStr) { delete state.sentNotifications[k]; stateChanged = true; } });
+  if (stateChanged) saveState();
+}
+
+// Catch-up: when user opens the app, show a summary if there are unsent reminders today
+function catchUpNotifications() {
+  if (!state.pushSettings.enabled) return;
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const todayStr = todayISO(); const today = parseDate(todayStr);
+  const userBills = state.bills.filter(b => b.user === state.currentUser && !b.paid);
+  const due = userBills.filter(b => daysBetween(today, parseDate(b.dueDate)) <= 0);
+  if (due.length === 0) return;
+  const key = `__catchup__${todayStr}`;
+  if (state.sentNotifications[key]) return;
+  const overdue = due.filter(b => daysBetween(today, parseDate(b.dueDate)) < 0);
+  const todayDue = due.filter(b => daysBetween(today, parseDate(b.dueDate)) === 0);
+  let body = '';
+  if (overdue.length) body += `${overdue.length} vencida(s). `;
+  if (todayDue.length) body += `${todayDue.length} vence(m) hoje.`;
+  if (body) {
+    showNotification('💰 Contas a Pagar', body.trim() + ' Toque para abrir.', { tag: key });
+    state.sentNotifications[key] = true; saveState();
+  }
+}
+
+setInterval(checkNotifications, 30000);
+setTimeout(checkNotifications, 3000);
+
+// ============= PWA INSTALL =============
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
+
+function isIos() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+function isInStandaloneMode() { return ('standalone' in navigator) && navigator.standalone || window.matchMedia('(display-mode: standalone)').matches; }
+function dismissInstallBanner() { document.getElementById('installBanner').classList.remove('show'); sessionStorage.setItem('bannerDismissed', '1'); }
+
+if (isIos() && !isInStandaloneMode() && !sessionStorage.getItem('bannerDismissed')) {
+  setTimeout(() => document.getElementById('installBanner').classList.add('show'), 2500);
+}
+
+// ============= SERVICE WORKER REGISTRATION =============
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').then(reg => {
+      console.log('SW registered:', reg.scope);
+    }).catch(err => console.warn('SW registration failed:', err));
+  });
+}
+
+// ============= INIT =============
+loadState();
+</script>
+</body>
+</html>
