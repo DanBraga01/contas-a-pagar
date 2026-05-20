@@ -1,5 +1,5 @@
 // Service Worker - Contas a Pagar v1.1
-const CACHE_VERSION = 'contas-v1.1.1';
+const CACHE_VERSION = 'contas-v1.1.2';
 const ASSETS = [
   './',
   './index.html',
