@@ -341,6 +341,20 @@
   </div>
 </div>
 
+<!-- Firebase password prompt modal -->
+<div class="modal-overlay" id="fbPasswordModal">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header"><h2>🔐 Senha do Firebase</h2></div>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:14px;">Digite uma senha de pelo menos 6 caracteres. Use a <strong>MESMA senha</strong> no iPhone e no Mac.</p>
+    <div class="form-group"><label>Senha Firebase</label><input type="password" id="fbPasswordInput" minlength="6" placeholder="Mínimo 6 caracteres"></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-primary" style="flex:1;" onclick="confirmFbPassword()">Confirmar</button>
+      <button class="btn-icon" onclick="cancelFbPassword()" style="background:var(--danger);color:white;">Cancelar</button>
+    </div>
+    <p class="error-msg" id="fbPasswordError"></p>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <div class="install-banner" id="installBanner"><div style="flex:1;">📲 Adicione à Tela de Início: toque em <strong>Compartilhar</strong> → <strong>"Adicionar à Tela de Início"</strong></div><button class="close-banner" onclick="dismissInstallBanner()">×</button></div>
 
@@ -912,6 +926,29 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+// ============= MODAL SENHA FIREBASE =============
+let fbPasswordResolver = null;
+function askFirebasePassword() {
+  return new Promise((resolve) => {
+    fbPasswordResolver = resolve;
+    document.getElementById('fbPasswordInput').value = '';
+    document.getElementById('fbPasswordError').textContent = '';
+    document.getElementById('fbPasswordModal').classList.add('active');
+    setTimeout(() => document.getElementById('fbPasswordInput').focus(), 100);
+  });
+}
+function confirmFbPassword() {
+  const pwd = document.getElementById('fbPasswordInput').value;
+  const errEl = document.getElementById('fbPasswordError');
+  if (!pwd || pwd.length < 6) { errEl.textContent = 'Senha deve ter pelo menos 6 caracteres.'; return; }
+  document.getElementById('fbPasswordModal').classList.remove('active');
+  if (fbPasswordResolver) { fbPasswordResolver(pwd); fbPasswordResolver = null; }
+}
+function cancelFbPassword() {
+  document.getElementById('fbPasswordModal').classList.remove('active');
+  if (fbPasswordResolver) { fbPasswordResolver(null); fbPasswordResolver = null; }
+}
+
 // ============= FIREBASE SYNC =============
 let firebaseApp = null, firebaseAuth = null, firebaseDb = null, firebaseUser = null;
 let firebaseUnsubscribe = null, suppressNextSnapshot = false;
@@ -995,13 +1032,24 @@ async function disableSync() {
   showToast('Sincronização desativada', '');
 }
 
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(`Timeout: ${label} demorou mais de ${ms/1000}s`)), ms))
+  ]);
+}
+
 async function initFirebase(cfg) {
   if (firebaseConnecting) return;
   firebaseConnecting = true;
   try {
-    const { initializeApp, getApps, deleteApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-    const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
-    const { getFirestore, doc, setDoc, onSnapshot, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    showToast('1/4 Baixando SDK do Firebase...', '');
+    const fbApp = await withTimeout(import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'), 20000, 'download SDK app');
+    const fbAuth = await withTimeout(import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'), 20000, 'download SDK auth');
+    const fbStore = await withTimeout(import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'), 20000, 'download SDK firestore');
+    const { initializeApp, getApps, deleteApp } = fbApp;
+    const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } = fbAuth;
+    const { getFirestore, doc, setDoc, onSnapshot, serverTimestamp } = fbStore;
 
     // Limpa instâncias antigas pra evitar erro duplicate-app
     const existingApps = getApps();
@@ -1010,33 +1058,39 @@ async function initFirebase(cfg) {
       for (const a of existingApps) { try { await deleteApp(a); } catch(e){ console.warn('deleteApp:', e); } }
     }
 
+    showToast('2/4 Inicializando Firebase...', '');
     firebaseApp = initializeApp(cfg);
     firebaseAuth = getAuth(firebaseApp);
     firebaseDb = getFirestore(firebaseApp);
 
     if (!state.currentUser) { showToast('Faça login local antes de ativar sync', 'danger'); return; }
     const email = state.currentUser;
-    let fbPassword = sessionStorage.getItem('fb_pass_' + email);
+    let fbPassword = sessionStorage.getItem('fb_pass_' + email) || localStorage.getItem('fb_pass_' + email);
     if (!fbPassword) {
-      fbPassword = prompt('Crie/digite uma senha para a conta Firebase (mínimo 6 caracteres, use a MESMA no Mac e iPhone):');
-      if (!fbPassword || fbPassword.length < 6) { showToast('Senha inválida', 'danger'); return; }
+      fbPassword = await askFirebasePassword();
+      if (!fbPassword) { showToast('Sincronização cancelada', 'danger'); return; }
       sessionStorage.setItem('fb_pass_' + email, fbPassword);
+      // Salva também em localStorage pra persistir entre sessões (com aviso)
+      localStorage.setItem('fb_pass_' + email, fbPassword);
     }
 
+    showToast('3/4 Autenticando no Firebase...', '');
     try {
-      const cred = await signInWithEmailAndPassword(firebaseAuth, email, fbPassword);
+      const cred = await withTimeout(signInWithEmailAndPassword(firebaseAuth, email, fbPassword), 15000, 'login Firebase');
       firebaseUser = cred.user;
     } catch(e) {
       if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
-        const cred = await createUserWithEmailAndPassword(firebaseAuth, email, fbPassword);
+        const cred = await withTimeout(createUserWithEmailAndPassword(firebaseAuth, email, fbPassword), 15000, 'criação conta Firebase');
         firebaseUser = cred.user;
         showToast('Conta Firebase criada', 'success');
       } else {
         sessionStorage.removeItem('fb_pass_' + email);
+        localStorage.removeItem('fb_pass_' + email);
         throw e;
       }
     }
 
+    showToast('4/4 Conectando ao Firestore...', '');
     const docRef = doc(firebaseDb, 'users', firebaseUser.uid, 'data', 'state');
     firebaseUnsubscribe = onSnapshot(docRef, async (snap) => {
       if (suppressNextSnapshot) { suppressNextSnapshot = false; return; }
