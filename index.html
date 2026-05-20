@@ -946,7 +946,9 @@ function updateSyncStatus() {
   }
 }
 
+let firebaseConnecting = false;
 async function enableSync() {
+  if (firebaseConnecting) { showToast('Conexão em andamento, aguarde...', ''); return; }
   let txt = document.getElementById('syncConfig').value.trim();
   if (!txt) { showToast('Cole o firebaseConfig primeiro', 'danger'); return; }
 
@@ -994,10 +996,19 @@ async function disableSync() {
 }
 
 async function initFirebase(cfg) {
+  if (firebaseConnecting) return;
+  firebaseConnecting = true;
   try {
-    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { initializeApp, getApps, deleteApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
     const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const { getFirestore, doc, setDoc, onSnapshot, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+
+    // Limpa instâncias antigas pra evitar erro duplicate-app
+    const existingApps = getApps();
+    if (existingApps.length > 0) {
+      if (firebaseUnsubscribe) { try { firebaseUnsubscribe(); } catch(e){} firebaseUnsubscribe = null; }
+      for (const a of existingApps) { try { await deleteApp(a); } catch(e){ console.warn('deleteApp:', e); } }
+    }
 
     firebaseApp = initializeApp(cfg);
     firebaseAuth = getAuth(firebaseApp);
@@ -1047,6 +1058,8 @@ async function initFirebase(cfg) {
   } catch(err) {
     console.error('Firebase error:', err);
     showToast('Erro Firebase: ' + (err.message || err), 'danger');
+  } finally {
+    firebaseConnecting = false;
   }
 }
 
